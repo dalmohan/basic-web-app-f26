@@ -20,14 +20,23 @@ export default function QueryProcessor(query: string): string {
   }
 
   const addition = query.match(/-?\d+(?:\.\d+)?(?:\s*(?:plus|\+)\s*-?\d+(?:\.\d+)?)+/i);
-  if (addition) {
-    const numbers = addition[0].match(/-?\d+(?:\.\d+)?/g) ?? [];
+  const additionRequested = /\b(?:add|addition)\b/i.test(query);
+  if (addition || additionRequested) {
+    const numbers = (addition?.[0] ?? query).match(/-?\d+(?:\.\d+)?/g) ?? [];
+    if (numbers.length < 2) {
+      return "";
+    }
     return String(numbers.reduce((sum, number) => sum + Number(number), 0));
   }
 
-  const largest = query.match(/largest:?\s*(-?\d+(?:,\s*-?\d+)+)/i);
-  if (largest) {
-    return String(Math.max(...largest[1].split(",").map(Number)));
+  const comparison = query.match(/\b(largest|larger|biggest|greatest|highest|smallest|smaller|lowest)\b/i);
+  if (comparison) {
+    const numbers = query.match(/-?\d+(?:\.\d+)?/g)?.map(Number) ?? [];
+    if (numbers.length < 2) {
+      return "";
+    }
+    const wantsSmallest = /^(smallest|smaller|lowest)$/i.test(comparison[1]);
+    return String(wantsSmallest ? Math.min(...numbers) : Math.max(...numbers));
   }
 
   return "";
