@@ -19,6 +19,33 @@ export default function QueryProcessor(query: string): string {
     return "20";
   }
 
+  if (/\bprime\b/i.test(query)) {
+    const numbers = query.match(/-?\d+(?:\.\d+)?/g)?.map(Number) ?? [];
+    const isPrime = (candidate: number): boolean => {
+      if (!Number.isInteger(candidate) || candidate < 2) {
+        return false;
+      }
+      for (let divisor = 2; divisor <= Math.sqrt(candidate); divisor += 1) {
+        if (candidate % divisor === 0) {
+          return false;
+        }
+      }
+      return true;
+    };
+
+    if (/\bprimes\b|\bwhich\b/i.test(query)) {
+      const primes = numbers.filter(isPrime);
+      return primes.length > 0 ? primes.join(", ") : "None";
+    }
+
+    return numbers.length > 0 && isPrime(numbers[0]) ? "Yes" : "No";
+  }
+
+  const subtraction = query.match(/(-?\d+(?:\.\d+)?)\s*(?:minus|−|-)\s*(-?\d+(?:\.\d+)?)/i);
+  if (subtraction) {
+    return String(Number(subtraction[1]) - Number(subtraction[2]));
+  }
+
   const addition = query.match(/-?\d+(?:\.\d+)?(?:\s*(?:plus|\+)\s*-?\d+(?:\.\d+)?)+/i);
   const additionRequested = /\b(?:add|addition)\b/i.test(query);
   if (addition || additionRequested) {

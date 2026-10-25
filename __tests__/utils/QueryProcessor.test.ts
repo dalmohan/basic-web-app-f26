@@ -40,4 +40,14 @@ describe("QueryProcessor", () => {
         expect(QueryProcessor("Which is larger, 34 or 63?")).toBe("63");
         expect(QueryProcessor("Which is smaller, 34 or 63?")).toBe("34");
     });
+
+    test('should subtract numbers in the question', () => {
+        expect(QueryProcessor("What is 71 minus 94?")).toBe("-23");
+    });
+
+    test('should return the prime numbers in a list', () => {
+        expect(QueryProcessor("Which of the following numbers are primes: 4, 70, 25, 17, 20?")).toBe("17");
+        expect(QueryProcessor("Is 17 a prime number?")).toBe("Yes");
+        expect(QueryProcessor("Is 18 a prime number?")).toBe("No");
+    });
 });
