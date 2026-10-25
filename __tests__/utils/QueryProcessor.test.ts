@@ -33,6 +33,11 @@ describe("QueryProcessor", () => {
         expect(QueryProcessor("What is 30 + 18 + 7?")).toBe("55");
         expect(QueryProcessor("What is the addition of 30 and 18?")).toBe("48");
         expect(QueryProcessor("Add 22 and 83")).toBe("105");
+        expect(QueryProcessor("What is 46 plus 87 multiplied by 42?")).toBe("3700");
+    });
+
+    test('should calculate powers exactly', () => {
+        expect(QueryProcessor("What is 39 to the power of 65?")).toBe("26254240347363745754617745325509020787281403007589766257518484718066029234925468314010924538244020994599");
     });
 
     test('should return the largest number in a list', () => {
