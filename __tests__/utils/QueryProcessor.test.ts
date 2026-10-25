@@ -40,6 +40,13 @@ describe("QueryProcessor", () => {
         expect(QueryProcessor("What is 39 to the power of 65?")).toBe("26254240347363745754617745325509020787281403007589766257518484718066029234925468314010924538244020994599");
     });
 
+    test('should understand common arithmetic phrasings', () => {
+        expect(QueryProcessor("What is the sum of 22 and 83?")).toBe("105");
+        expect(QueryProcessor("Subtract 18 from 30")).toBe("12");
+        expect(QueryProcessor("What is the product of 6 and 7?")).toBe("42");
+        expect(QueryProcessor("Divide 84 by 12")).toBe("7");
+    });
+
     test('should return the largest number in a list', () => {
         expect(QueryProcessor("Which of the following numbers is the largest: 63, 34, 29?")).toBe("63");
         expect(QueryProcessor("Which is larger, 34 or 63?")).toBe("63");
@@ -54,5 +61,10 @@ describe("QueryProcessor", () => {
         expect(QueryProcessor("Which of the following numbers are primes: 4, 70, 25, 17, 20?")).toBe("17");
         expect(QueryProcessor("Is 17 a prime number?")).toBe("Yes");
         expect(QueryProcessor("Is 18 a prime number?")).toBe("No");
+    });
+
+    test('should calculate Scrabble scores for different words', () => {
+        expect(QueryProcessor("What is the Scrabble score of september?")).toBe("15");
+        expect(QueryProcessor("What is the Scrabble score for quiz?")).toBe("22");
     });
 });

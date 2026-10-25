@@ -57,6 +57,21 @@ export default function QueryProcessor(query: string): string {
     return "20";
   }
 
+  if (/\bscrabble\b/i.test(query) && /\bscore\b/i.test(query)) {
+    const word = query.match(/\b(?:of|for)\s+([a-z]+)\b/i)?.[1]
+      ?? query.match(/\b([a-z]+)(?:'s)?\s+(?:scrabble\s+)?score\b/i)?.[1];
+    if (!word) {
+      return "";
+    }
+
+    const letterValues: Record<string, number> = {
+      a: 1, b: 3, c: 3, d: 2, e: 1, f: 4, g: 2, h: 4, i: 1,
+      j: 8, k: 5, l: 1, m: 3, n: 1, o: 1, p: 3, q: 10, r: 1,
+      s: 1, t: 1, u: 1, v: 4, w: 4, x: 8, y: 4, z: 10,
+    };
+    return String([...word.toLowerCase()].reduce((total, letter) => total + letterValues[letter], 0));
+  }
+
   const power = query.match(/(-?\d+)\s*(?:to\s+the\s+power\s+of|raised\s+to\s+(?:the\s+)?power\s+of|to\s+power|\^)\s*(\d+)/i);
   const otherOperation = power && query.replace(power[0], "").match(/\b(?:plus|minus|multiplied\s+by|times|divided\s+by)\b|[+*/×÷]/i);
   if (power && !otherOperation) {
@@ -71,6 +86,26 @@ export default function QueryProcessor(query: string): string {
       exponent /= BigInt(2);
     }
     return result.toString();
+  }
+
+  const namedAddition = query.match(/\b(?:sum|addition)\s+of\s+(-?\d+(?:\.\d+)?)\s+and\s+(-?\d+(?:\.\d+)?)/i);
+  if (namedAddition) {
+    return String(Number(namedAddition[1]) + Number(namedAddition[2]));
+  }
+
+  const namedSubtraction = query.match(/\bsubtract\s+(-?\d+(?:\.\d+)?)\s+from\s+(-?\d+(?:\.\d+)?)/i);
+  if (namedSubtraction) {
+    return String(Number(namedSubtraction[2]) - Number(namedSubtraction[1]));
+  }
+
+  const namedMultiplication = query.match(/\b(?:multiply\s+(-?\d+(?:\.\d+)?)\s+by|product\s+of\s+(-?\d+(?:\.\d+)?)\s+and)\s+(-?\d+(?:\.\d+)?)/i);
+  if (namedMultiplication) {
+    return String(Number(namedMultiplication[1] ?? namedMultiplication[2]) * Number(namedMultiplication[3]));
+  }
+
+  const namedDivision = query.match(/\b(?:divide\s+(-?\d+(?:\.\d+)?)\s+by|quotient\s+of\s+(-?\d+(?:\.\d+)?)\s+and)\s+(-?\d+(?:\.\d+)?)/i);
+  if (namedDivision) {
+    return String(Number(namedDivision[1] ?? namedDivision[2]) / Number(namedDivision[3]));
   }
 
   const arithmeticExpression = query.match(/-?\d+(?:\.\d+)?(?:\s*(?:plus|minus|multiplied\s+by|times|divided\s+by|to\s+the\s+power\s+of|raised\s+to\s+(?:the\s+)?power\s+of|to\s+power|[+*/^×÷])\s*-?\d+(?:\.\d+)?)+/i);
@@ -106,7 +141,7 @@ export default function QueryProcessor(query: string): string {
   }
 
   const addition = query.match(/-?\d+(?:\.\d+)?(?:\s*(?:plus|\+)\s*-?\d+(?:\.\d+)?)+/i);
-  const additionRequested = /\b(?:add|addition)\b/i.test(query);
+  const additionRequested = /\b(?:add|addition|sum)\b/i.test(query);
   if (addition || additionRequested) {
     const numbers: string[] = (addition?.[0] ?? query).match(/-?\d+(?:\.\d+)?/g) ?? [];
     if (numbers.length < 2) {
