@@ -57,6 +57,15 @@ export default function QueryProcessor(query: string): string {
     return "20";
   }
 
+  const anagramQuestion = query.match(/\banagram\s+of\s+([a-z]+)/i);
+  if (anagramQuestion) {
+    const target = anagramQuestion[1].toLowerCase().split("").sort().join("");
+    const choicesStart = (anagramQuestion.index ?? 0) + anagramQuestion[0].length;
+    const choices = query.slice(choicesStart).match(/[a-z]+/gi) ?? [];
+    const matches = choices.filter((choice) => choice.toLowerCase().split("").sort().join("") === target);
+    return matches.length > 0 ? matches.join(", ") : "None";
+  }
+
   if (/\bscrabble\b/i.test(query) && /\bscore\b/i.test(query)) {
     const word = query.match(/\b(?:of|for)\s+([a-z]+)\b/i)?.[1]
       ?? query.match(/\b([a-z]+)(?:'s)?\s+(?:scrabble\s+)?score\b/i)?.[1];
@@ -69,7 +78,7 @@ export default function QueryProcessor(query: string): string {
       j: 8, k: 5, l: 1, m: 3, n: 1, o: 1, p: 3, q: 10, r: 1,
       s: 1, t: 1, u: 1, v: 4, w: 4, x: 8, y: 4, z: 10,
     };
-    return String([...word.toLowerCase()].reduce((total, letter) => total + letterValues[letter], 0));
+    return String(word.toLowerCase().split("").reduce((total, letter) => total + letterValues[letter], 0));
   }
 
   const power = query.match(/(-?\d+)\s*(?:to\s+the\s+power\s+of|raised\s+to\s+(?:the\s+)?power\s+of|to\s+power|\^)\s*(\d+)/i);

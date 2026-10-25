@@ -67,4 +67,9 @@ describe("QueryProcessor", () => {
         expect(QueryProcessor("What is the Scrabble score of september?")).toBe("15");
         expect(QueryProcessor("What is the Scrabble score for quiz?")).toBe("22");
     });
+
+    test('should find anagrams among answer choices', () => {
+        expect(QueryProcessor("Which of the following is an anagram of admirer: forgot, random, border, married, dairy?")).toBe("married");
+        expect(QueryProcessor("Which of the following is an anagram of dictionary: incendiary, indicatory, butterfly, abdication?")).toBe("indicatory");
+    });
 });
