@@ -19,7 +19,16 @@ export default function QueryProcessor(query: string): string {
     return "20";
   }
 
+  const addition = query.match(/-?\d+(?:\.\d+)?(?:\s*(?:plus|\+)\s*-?\d+(?:\.\d+)?)+/i);
+  if (addition) {
+    const numbers = addition[0].match(/-?\d+(?:\.\d+)?/g) ?? [];
+    return String(numbers.reduce((sum, number) => sum + Number(number), 0));
+  }
 
+  const largest = query.match(/largest:?\s*(-?\d+(?:,\s*-?\d+)+)/i);
+  if (largest) {
+    return String(Math.max(...largest[1].split(",").map(Number)));
+  }
 
   return "";
 }

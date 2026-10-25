@@ -25,4 +25,15 @@ describe("QueryProcessor", () => {
             "Dhabya"
           ));
     })
+
+    test('should add numbers in the question', () => {
+        expect(QueryProcessor("What is 30 plus 18?")).toBe("48");
+        expect(QueryProcessor("What is 22 plus 83?")).toBe("105");
+        expect(QueryProcessor("What is 30 plus 18 plus 7?")).toBe("55");
+        expect(QueryProcessor("What is 30 + 18 + 7?")).toBe("55");
+    });
+
+    test('should return the largest number in a list', () => {
+        expect(QueryProcessor("Which of the following numbers is the largest: 63, 34, 29?")).toBe("63");
+    });
 });
